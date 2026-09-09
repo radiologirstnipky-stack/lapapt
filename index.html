@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Serah Terima Jaga Apotek — Rumkit TNI AD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green-950:#131f17;
+    --green-900:#1c2e21;
+    --green-800:#2c4732;
+    --green-700:#3a5c42;
+    --brass-600:#a9803f;
+    --brass-500:#c1974f;
+    --paper:#eef1ec;
+    --card:#ffffff;
+    --line:#dde3da;
+    --text:#1c231e;
+    --text-dim:#5c6a5e;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .head{
+    background:linear-gradient(180deg,var(--green-950),var(--green-900) 85%);
+    color:#f2f3ee;
+    padding:18px 16px 22px;
+    border-bottom:3px solid var(--brass-600);
+  }
+  .head-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .head-eyebrow{
+    font-family:'Barlow Semi Condensed',sans-serif;
+    font-weight:700;
+    font-size:12.5px;
+    letter-spacing:.02em;
+    color:var(--brass-500);
+    margin:0 0 2px;
+  }
+  .greeting{
+    font-family:'Barlow Semi Condensed',sans-serif;
+    font-weight:700;
+    font-size:26px;
+    line-height:1.1;
+    margin:0;
+  }
+  .clock{text-align:right;font-variant-numeric:tabular-nums;}
+  .clock-time{font-size:20px;font-weight:600;}
+  .clock-zone{font-size:11px;color:#b8c2b8;}
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:14px 12px 0;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px;
+    margin-bottom:12px;
+  }
+  .card-title{
+    font-family:'Barlow Semi Condensed',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:.01em;
+    color:var(--green-900);
+    margin:0 0 10px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .field{margin-bottom:10px;}
+  .field:last-child{margin-bottom:0;}
+  label.flabel{
+    display:block;
+    font-size:12px;
+    color:var(--text-dim);
+    margin-bottom:4px;
+    font-weight:500;
+  }
+  input[type=text],input[type=date],select{
+    width:100%;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#fbfbfa;
+    font-family:inherit;
+    font-size:14.5px;
+    color:var(--text);
+  }
+  input:focus,select:focus{
+    outline:2px solid var(--green-700);
+    outline-offset:1px;
+    background:#fff;
+  }
+  .toggle-line{
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;color:var(--text-dim);
+    margin-bottom:8px;
+  }
+  .toggle-line input{accent-color:var(--green-700);width:16px;height:16px;}
+  .date-preview{
+    font-family:'Barlow Semi Condensed',sans-serif;
+    font-weight:700;
+    font-size:18px;
+    color:var(--green-900);
+    background:#f2f5f0;
+    border:1px dashed var(--line);
+    border-radius:8px;
+    padding:8px 10px;
+  }
+
+  /* Dinas: two rows, label left / name right */
+  .dinas-row{
+    display:grid;
+    grid-template-columns:96px 1fr;
+    gap:10px;
+    align-items:center;
+    padding:8px 0;
+  }
+  .dinas-row + .dinas-row{border-top:1px solid var(--line);}
+  .dinas-label-select{
+    font-family:'Barlow Semi Condensed',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    color:var(--green-900);
+    background:#f2f5f0;
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:6px 5px;
+    width:100%;
+    cursor:pointer;
+  }
+  .dinas-label-select:focus{outline:2px solid var(--green-700);outline-offset:1px;}
+  .name-input-wrap{position:relative;}
+  .saved-names{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    margin-top:6px;
+  }
+  .saved-chip{
+    font-size:11.5px;
+    padding:4px 9px;
+    border-radius:999px;
+    background:#eef2ea;
+    border:1px solid var(--line);
+    color:var(--green-900);
+    cursor:pointer;
+  }
+  .saved-chip:active{background:var(--green-800);color:#fff;}
+  .saved-chip .rm{margin-left:5px;color:var(--text-dim);font-weight:700;}
+
+  /* accordion categories */
+  .cat{border:1px solid var(--line);border-radius:8px;margin-bottom:7px;overflow:hidden;}
+  .cat:last-child{margin-bottom:0;}
+  .cat summary{
+    list-style:none;cursor:pointer;padding:10px 11px;
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    background:#fafaf8;
+  }
+  .cat summary::-webkit-details-marker{display:none;}
+  .cat[open] summary{background:#f0f3ed;border-bottom:1px solid var(--line);}
+  .cat-name{display:flex;align-items:baseline;gap:7px;font-size:13.5px;font-weight:600;min-width:0;}
+  .cat-code{font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;color:var(--brass-600);font-size:14px;}
+  .cat-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .cat-total{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:#e4e9e1;color:var(--text-dim);white-space:nowrap;}
+  .cat-total.on{background:var(--green-800);color:#fff;}
+  .cat-body{padding:9px 11px 11px;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .sub-row{
+    display:flex;align-items:center;justify-content:space-between;gap:6px;
+    background:#fbfbfa;border:1px solid var(--line);border-radius:7px;padding:6px 6px 6px 9px;
+  }
+  .sub-label{font-size:12px;color:var(--text-dim);line-height:1.2;}
+  .stepper{display:flex;align-items:center;gap:5px;}
+  .stepper button{
+    width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:#fff;
+    color:var(--green-900);font-size:15px;font-weight:700;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;padding:0;
+  }
+  .stepper button:active{background:var(--green-800);color:#fff;}
+  .stepper button.minus{color:#a13e3e;}
+  .stepper .count{min-width:16px;text-align:center;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums;}
+  @media (max-width:380px){.cat-body{grid-template-columns:1fr;}}
+  .hint{font-size:11px;color:var(--text-dim);}
+
+  /* ===== Bottom preview sheet ===== */
+  #previewPanel{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    z-index:999;
+    background:#fff;
+    border-top:2px solid var(--brass-600);
+    box-shadow:0 -6px 18px rgba(19,31,23,.18);
+    display:flex;
+    flex-direction:column;
+    transition:height .25s ease;
+    height:54px;
+    max-width:640px;
+    margin:0 auto;
+    border-radius:12px 12px 0 0;
+    overflow:hidden;
+  }
+  #previewPanel.maximized{height:min(78vh,640px);}
+  .preview-bar{
+    height:54px;
+    min-height:54px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 12px;
+    cursor:pointer;
+    background:var(--green-900);
+    color:#f2f3ee;
+  }
+  .preview-bar-left{display:flex;align-items:center;gap:8px;}
+  .preview-dot{width:7px;height:7px;border-radius:50%;background:#7fdc9a;}
+  .preview-bar-title{font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:14px;}
+  .preview-bar-actions{display:flex;align-items:center;gap:6px;}
+  .icon-btn{
+    width:30px;height:30px;border-radius:7px;border:1px solid rgba(255,255,255,.25);
+    background:rgba(255,255,255,.08);color:#fff;font-size:15px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+  }
+  .icon-btn:active{background:rgba(255,255,255,.22);}
+  #waBtn{background:#25D366;border-color:#25D366;}
+  #waBtn:active{background:#1fb959;}
+  .preview-body{
+    flex:1;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    padding:10px 12px 12px;
+    min-height:0;
+  }
+  #outputText{
+    flex:1;
+    width:100%;
+    resize:none;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px;
+    font-family:'Inter',monospace;
+    font-size:12.5px;
+    line-height:1.5;
+    white-space:pre-wrap;
+    background:#fbfbfa;
+    min-height:0;
+  }
+  .copy-btn{
+    margin-top:8px;
+    padding:11px;
+    background:var(--brass-600);
+    color:#fff;
+    border:none;
+    border-radius:9px;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .copy-btn:active{background:var(--brass-500);}
+  .copy-note{text-align:center;font-size:12px;color:var(--text-dim);margin-top:5px;height:14px;}
+  #bottomSpacer{height:66px;}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <div class="head-top">
+    <div>
+      <p class="head-eyebrow">RUMKIT TNI AD · APOTEK</p>
+      <p class="greeting" id="greetingText">Selamat pagi</p>
+    </div>
+    <div class="clock">
+      <div class="clock-time" id="clockTime">--:--</div>
+      <div class="clock-zone">WIB</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- TANGGAL -->
+  <div class="card">
+    <div class="card-title">Tanggal Laporan</div>
+    <div class="toggle-line">
+      <input type="checkbox" id="manualDateToggle">
+      <label for="manualDateToggle">Isi tanggal manual</label>
+    </div>
+    <div class="field" id="autoDateField">
+      <div class="date-preview" id="dateAutoPreview">—</div>
+    </div>
+    <div class="field" id="manualDateField" style="display:none;">
+      <input type="date" id="manualDateInput">
+    </div>
+  </div>
+
+  <!-- DINAS -->
+  <div class="card">
+    <div class="card-title">Dinas Jaga</div>
+
+    <div class="dinas-row">
+      <select class="dinas-label-select" id="shiftSelect1">
+        <option value="pagi">Dinas Pagi</option>
+        <option value="siang">Dinas Siang</option>
+        <option value="malam">Dinas Malam</option>
+      </select>
+      <div class="name-input-wrap">
+        <input type="text" id="nameInput1" placeholder="Nama petugas">
+        <div class="saved-names" id="savedNames1"></div>
+      </div>
+    </div>
+
+    <div class="dinas-row">
+      <select class="dinas-label-select" id="shiftSelect2">
+        <option value="pagi">Dinas Pagi</option>
+        <option value="siang">Dinas Siang</option>
+        <option value="malam" selected>Dinas Malam</option>
+      </select>
+      <div class="name-input-wrap">
+        <input type="text" id="nameInput2" placeholder="Nama petugas">
+        <div class="saved-names" id="savedNames2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KETERANGAN -->
+  <div class="card">
+    <div class="card-title">
+      <span>Keterangan Pelayanan</span>
+      <span class="hint" id="grandTotalHint">0 pasien</span>
+    </div>
+    <div id="categoryList"></div>
+  </div>
+
+</div>
+
+<div id="bottomSpacer"></div>
+
+<!-- BOTTOM PREVIEW SHEET -->
+<div id="previewPanel">
+  <div class="preview-bar" id="previewBar">
+    <div class="preview-bar-left">
+      <span class="preview-dot"></span>
+      <span class="preview-bar-title">Preview Laporan</span>
+    </div>
+    <div class="preview-bar-actions">
+      <button type="button" class="icon-btn" id="waBtn" title="Kirim ke WhatsApp">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.41-1.42a9.87 9.87 0 0 0 4.63 1.18h.01c5.46 0 9.9-4.45 9.9-9.9C21.95 6.45 17.5 2 12.04 2Zm5.8 14.06c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.16-4.94-4.35-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.27-.29.58-.36.78-.36.2 0 .39 0 .56.01.18.01.42-.07.65.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.13.63-.08.17-.2.72-.84.91-1.13.19-.29.39-.24.65-.14.27.1 1.71.81 2 .96.29.14.48.21.55.33.07.12.07.68-.17 1.36Z"/></svg>
+      </button>
+      <button type="button" class="icon-btn" id="copyBtn" title="Salin teks">⧉</button>
+      <button type="button" class="icon-btn" id="toggleBtn" title="Maximize">▲</button>
+    </div>
+  </div>
+  <div class="preview-body">
+    <textarea id="outputText" readonly></textarea>
+    <div class="copy-note" id="copyNote"></div>
+  </div>
+</div>
+
+<script>
+// ---------- Category data ----------
+const ALL_SUBS = ['Militer','PNS','KBT','Masy. Umum','Purnawirawan'];
+const CATEGORIES = [
+  {code:'A', title:'Pasien Poli Dalam',      subs:ALL_SUBS,            hasKet:true},
+  {code:'B', title:'Pasien Poli Gigi',       subs:ALL_SUBS,            hasKet:true},
+  {code:'C', title:'Rajal UGD',              subs:ALL_SUBS,            hasKet:true},
+  {code:'D', title:'Ranap UGD',              subs:ALL_SUBS,            hasKet:true},
+  {code:'E', title:'Poli Obgyn',             subs:ALL_SUBS,            hasKet:false},
+  {code:'F', title:'Poli Bedah',             subs:ALL_SUBS,            hasKet:false},
+  {code:'G', title:'Poli Anak',              subs:ALL_SUBS.slice(0,4), hasKet:false},
+  {code:'H', title:'Poli Saraf',             subs:ALL_SUBS,            hasKet:false},
+  {code:'I', title:'Poli Ortopedi',          subs:ALL_SUBS,            hasKet:false},
+  {code:'J', title:'Poli Jiwa/Psikiatri',    subs:ALL_SUBS,            hasKet:false},
+  {code:'K', title:'Poli Paru',              subs:ALL_SUBS,            hasKet:false},
+  {code:'L', title:'Poli Kulit & Kelamin',   subs:ALL_SUBS,            hasKet:false},
+];
+
+const state = {};
+CATEGORIES.forEach(c=>{
+  state[c.code] = {};
+  c.subs.forEach(s=> state[c.code][s]=0);
+});
+
+// ---------- Render category accordion ----------
+const listEl = document.getElementById('categoryList');
+CATEGORIES.forEach(c=>{
+  const det = document.createElement('details');
+  det.className='cat';
+  det.dataset.code = c.code;
+
+  const summary = document.createElement('summary');
+  summary.innerHTML = `
+    <span class="cat-name">
+      <span class="cat-code">${c.code}.</span>
+      <span class="cat-title">${c.title}</span>
+    </span>
+    <span class="cat-total" id="total-${c.code}">nihil</span>
+  `;
+  det.appendChild(summary);
+
+  const body = document.createElement('div');
+  body.className='cat-body';
+  c.subs.forEach(sub=>{
+    const row = document.createElement('div');
+    row.className='sub-row';
+    row.innerHTML = `
+      <span class="sub-label">${sub}</span>
+      <span class="stepper">
+        <button type="button" class="minus" data-code="${c.code}" data-sub="${sub}" aria-label="Kurangi ${sub}">−</button>
+        <span class="count" id="count-${c.code}-${sub.replace(/\W/g,'')}">0</span>
+        <button type="button" class="plus" data-code="${c.code}" data-sub="${sub}" aria-label="Tambah ${sub}">+</button>
+      </span>
+    `;
+    body.appendChild(row);
+  });
+  det.appendChild(body);
+  listEl.appendChild(det);
+});
+
+function subId(code,sub){ return `count-${code}-${sub.replace(/\W/g,'')}`; }
+
+function updateCategory(code){
+  const cat = CATEGORIES.find(c=>c.code===code);
+  const total = cat.subs.reduce((sum,s)=> sum + state[code][s], 0);
+  const totalEl = document.getElementById('total-'+code);
+  if(total>0){ totalEl.textContent = total+' orang'; totalEl.classList.add('on'); }
+  else { totalEl.textContent = 'nihil'; totalEl.classList.remove('on'); }
+  updateGrandTotal();
+  refreshPreview();
+}
+
+function updateGrandTotal(){
+  let grand=0;
+  CATEGORIES.forEach(c=> c.subs.forEach(s=> grand += state[c.code][s]));
+  document.getElementById('grandTotalHint').textContent = grand+' pasien';
+}
+
+listEl.addEventListener('click', (e)=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  const code = btn.dataset.code;
+  const sub = btn.dataset.sub;
+  if(!code || !sub) return;
+  if(btn.classList.contains('plus')) state[code][sub]++;
+  else if(btn.classList.contains('minus')) state[code][sub] = Math.max(0, state[code][sub]-1);
+  document.getElementById(subId(code,sub)).textContent = state[code][sub];
+  updateCategory(code);
+});
+
+// ---------- Clock / greeting (WIB realtime) ----------
+const DAY_NAMES = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+
+function getWIBParts(){
+  const now = new Date();
+  const fmt = new Intl.DateTimeFormat('en-CA', {
+    timeZone:'Asia/Jakarta', hour12:false,
+    year:'numeric', month:'2-digit', day:'2-digit',
+    hour:'2-digit', minute:'2-digit', second:'2-digit'
+  });
+  const parts = fmt.formatToParts(now);
+  const map = {};
+  parts.forEach(p=> map[p.type]=p.value);
+  return { year:+map.year, month:+map.month, day:+map.day, hour:+map.hour, minute:+map.minute, second:+map.second };
+}
+
+function greetingForHour(h){
+  if(h>=4 && h<11) return 'Selamat pagi';
+  if(h>=11 && h<15) return 'Selamat siang';
+  if(h>=15 && h<18) return 'Selamat sore';
+  return 'Selamat malam';
+}
+
+function dayNameFromDate(y,m,d){
+  const dt = new Date(Date.UTC(y, m-1, d));
+  return DAY_NAMES[dt.getUTCDay()];
+}
+function pad2(n){ return n.toString().padStart(2,'0'); }
+
+function tickClock(){
+  const wib = getWIBParts();
+  document.getElementById('clockTime').textContent = `${pad2(wib.hour)}:${pad2(wib.minute)}:${pad2(wib.second)}`;
+  document.getElementById('greetingText').textContent = greetingForHour(wib.hour);
+
+  if(!document.getElementById('manualDateToggle').checked){
+    const dname = dayNameFromDate(wib.year, wib.month, wib.day);
+    document.getElementById('dateAutoPreview').textContent = `${dname}, ${pad2(wib.day)}/${pad2(wib.month)}/${wib.year}`;
+  }
+  refreshPreview();
+}
+tickClock();
+setInterval(tickClock, 1000);
+
+// ---------- Manual date toggle ----------
+const manualToggle = document.getElementById('manualDateToggle');
+const autoDateField = document.getElementById('autoDateField');
+const manualDateField = document.getElementById('manualDateField');
+const manualDateInput = document.getElementById('manualDateInput');
+
+manualToggle.addEventListener('change', ()=>{
+  if(manualToggle.checked){
+    autoDateField.style.display='none';
+    manualDateField.style.display='block';
+    if(!manualDateInput.value){
+      const wib = getWIBParts();
+      manualDateInput.value = `${wib.year}-${pad2(wib.month)}-${pad2(wib.day)}`;
+    }
+  } else {
+    autoDateField.style.display='block';
+    manualDateField.style.display='none';
+  }
+  refreshPreview();
+});
+manualDateInput.addEventListener('input', refreshPreview);
+
+function getReportDateString(){
+  if(manualToggle.checked && manualDateInput.value){
+    const [y,m,d] = manualDateInput.value.split('-').map(Number);
+    return `${dayNameFromDate(y,m,d)}, ${pad2(d)}/${pad2(m)}/${y}`;
+  }
+  return document.getElementById('dateAutoPreview').textContent;
+}
+
+// ---------- Dinas: dropdown shift per baris + saved names via window.storage ----------
+const SHIFT_WORD = { pagi:'pagi', siang:'siang', malam:'malam' };
+const STORAGE_KEYS = { pagi:'dinas-nama-pagi', siang:'dinas-nama-siang', malam:'dinas-nama-malam' };
+let savedNamesCache = { pagi:[], siang:[], malam:[] };
+
+async function loadSavedNames(shift){
+  try{
+    const res = await window.storage.get(STORAGE_KEYS[shift], false);
+    const list = res && res.value ? JSON.parse(res.value) : [];
+    savedNamesCache[shift] = Array.isArray(list) ? list : [];
+  }catch(err){
+    savedNamesCache[shift] = [];
+  }
+  renderSavedNames(1);
+  renderSavedNames(2);
+}
+
+async function saveNameIfNew(shift, name){
+  name = name.trim();
+  if(!name) return;
+  if(savedNamesCache[shift].includes(name)) return;
+  savedNamesCache[shift] = [name, ...savedNamesCache[shift]].slice(0,10);
+  try{
+    await window.storage.set(STORAGE_KEYS[shift], JSON.stringify(savedNamesCache[shift]), false);
+  }catch(err){ /* storage unavailable, keep in-memory only */ }
+  renderSavedNames(1);
+  renderSavedNames(2);
+}
+
+async function removeName(shift, name){
+  savedNamesCache[shift] = savedNamesCache[shift].filter(n=> n!==name);
+  try{
+    await window.storage.set(STORAGE_KEYS[shift], JSON.stringify(savedNamesCache[shift]), false);
+  }catch(err){}
+  renderSavedNames(1);
+  renderSavedNames(2);
+}
+
+const slotEls = {
+  1:{ select:document.getElementById('shiftSelect1'), input:document.getElementById('nameInput1'), holder:document.getElementById('savedNames1') },
+  2:{ select:document.getElementById('shiftSelect2'), input:document.getElementById('nameInput2'), holder:document.getElementById('savedNames2') },
+};
+
+function renderSavedNames(rowNum){
+  const { select, input, holder } = slotEls[rowNum];
+  const shift = select.value;
+  holder.innerHTML='';
+  savedNamesCache[shift].forEach(name=>{
+    const chip = document.createElement('span');
+    chip.className='saved-chip';
+    chip.innerHTML = `${name}<span class="rm">&times;</span>`;
+    chip.addEventListener('click', (e)=>{
+      if(e.target.classList.contains('rm')){
+        e.stopPropagation();
+        removeName(shift, name);
+        return;
+      }
+      input.value = name;
+      refreshPreview();
+    });
+    holder.appendChild(chip);
+  });
+}
+
+function handleShiftChange(rowNum){
+  const changed = slotEls[rowNum];
+  const other = slotEls[rowNum===1 ? 2 : 1];
+  const newVal = changed.select.value;
+  if(other.select.value === newVal){
+    // swap to avoid duplicate shift on both rows
+    other.select.value = changed.select.dataset.prev || (newVal==='pagi' ? 'malam' : 'pagi');
+    renderSavedNames(rowNum===1 ? 2 : 1);
+  }
+  changed.select.dataset.prev = newVal;
+  renderSavedNames(rowNum);
+  refreshPreview();
+}
+
+slotEls[1].select.dataset.prev = slotEls[1].select.value;
+slotEls[2].select.dataset.prev = slotEls[2].select.value;
+slotEls[1].select.addEventListener('change', ()=> handleShiftChange(1));
+slotEls[2].select.addEventListener('change', ()=> handleShiftChange(2));
+
+[1,2].forEach(rowNum=>{
+  const { select, input } = slotEls[rowNum];
+  input.addEventListener('input', refreshPreview);
+  input.addEventListener('change', ()=> saveNameIfNew(select.value, input.value));
+  input.addEventListener('keydown', (e)=>{
+    if(e.key==='Enter'){ saveNameIfNew(select.value, input.value); input.blur(); }
+  });
+});
+
+loadSavedNames('pagi');
+loadSavedNames('siang');
+loadSavedNames('malam');
+
+// ---------- Build report text (live) ----------
+function fmtVal(n){ return n>0 ? `${n} orang` : 'nihil'; }
+
+function buildReport(){
+  const greeting = document.getElementById('greetingText').textContent;
+  const tanggal = getReportDateString();
+
+  let lines = [];
+  lines.push(greeting);
+  lines.push('Ijin melaporkan serah terima Jaga Apotek Rumkit TNI AD');
+  lines.push(`*${tanggal}* sebagai berikut:`);
+  lines.push('');
+  [1,2].forEach(rowNum=>{
+    const { select, input } = slotEls[rowNum];
+    const name = input.value.trim();
+    lines.push(`*Dinas ${SHIFT_WORD[select.value]}*`);
+    lines.push(name || '-');
+    lines.push('');
+  });
+  lines.push('');
+  lines.push('Keterangan :');
+
+  CATEGORIES.forEach(c=>{
+    const total = c.subs.reduce((s,k)=> s + state[c.code][k], 0);
+    lines.push(`${c.code}. ${c.title} : ${fmtVal(total)}`);
+    if(c.hasKet) lines.push('Ket :');
+    c.subs.forEach((sub,i)=>{
+      lines.push(`${i+1}. ${sub} : ${fmtVal(state[c.code][sub])}`);
+    });
+    lines.push('');
+  });
+
+  lines.push('Rumkit TNI-AD dalam keadaan aman,');
+  lines.push('Laporan Selesai\u{1F64F}\u{1F3FB}');
+
+  return lines.join('\n').replace(/\n{3,}/g,'\n\n');
+}
+
+function refreshPreview(){
+  const ta = document.getElementById('outputText');
+  const pos = ta.selectionStart;
+  ta.value = buildReport();
+}
+
+// ---------- Bottom sheet minimize/maximize ----------
+const panel = document.getElementById('previewPanel');
+const previewBar = document.getElementById('previewBar');
+const toggleBtn = document.getElementById('toggleBtn');
+
+function setPanelState(maximized){
+  panel.classList.toggle('maximized', maximized);
+  toggleBtn.textContent = maximized ? '▼' : '▲';
+  toggleBtn.title = maximized ? 'Minimize' : 'Maximize';
+}
+previewBar.addEventListener('click', ()=> setPanelState(!panel.classList.contains('maximized')));
+
+// ---------- Copy ----------
+document.getElementById('copyBtn').addEventListener('click', async (e)=>{
+  e.stopPropagation();
+  const ta = document.getElementById('outputText');
+  const note = document.getElementById('copyNote');
+  try{
+    await navigator.clipboard.writeText(ta.value);
+    note.textContent = 'Teks berhasil disalin.';
+  }catch(err){
+    ta.select();
+    document.execCommand('copy');
+    note.textContent = 'Teks berhasil disalin.';
+  }
+  setTimeout(()=> note.textContent='', 2200);
+});
+
+// ---------- Kirim ke WhatsApp ----------
+document.getElementById('waBtn').addEventListener('click', (e)=>{
+  e.stopPropagation();
+  const text = document.getElementById('outputText').value;
+  const url = 'https://wa.me/?text=' + encodeURIComponent(text);
+  window.open(url, '_blank');
+});
+
+// ---------- Init ----------
+refreshPreview();
+</script>
+</body>
+</html>
