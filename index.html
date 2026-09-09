@@ -503,8 +503,8 @@ function tickClock(){
   }
   refreshPreview();
 }
-tickClock();
-setInterval(tickClock, 1000);
+// NOTE: tickClock() is invoked later, at the end of the script, once every
+// variable it depends on (manualToggle, slotEls, etc.) has been declared.
 
 // ---------- Manual date toggle ----------
 const manualToggle = document.getElementById('manualDateToggle');
@@ -714,6 +714,8 @@ document.getElementById('waBtn').addEventListener('click', (e)=>{
 
 // ---------- Init ----------
 refreshPreview();
+tickClock();
+setInterval(tickClock, 1000);
 </script>
 </body>
 </html>
