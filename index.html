@@ -3,10 +3,10 @@
 <head>
 <!-- Chosen Palette: Military Pharmacy Olive & Brass (dengan Mode Gelap Warm Neutral) -->
 <!-- Application Structure Plan: Aplikasi web satu halaman (SPA) berfokus pada efisiensi operasional petugas Apotek Rumkit TNI AD. Konfigurasi URL Google Apps Script diletakkan di dalam variabel JavaScript file HTML (const GAS_URL) untuk menjaga kebersihan UI utama. UI terdiri dari Header (jam WIB & tombol Dark Mode), Pemilih Tanggal, Input Petugas Dinas Jaga dengan chip nama tersimpan & status sinkronisasi, Accordion Kategori Pelayanan Pasien dengan stepper, serta Bottom Preview Sheet interaktif. -->
-<!-- Visualization & Content Choices: Pengelompokan data menggunakan komponen HTML/CSS responsive, indikator badge status sinkronisasi pada kartu Dinas Jaga, stepper interaktif untuk hitung cepat pasien per kategori, serta bottom sheet untuk pratinjau format teks laporan siap kirim dengan dukungan emoji universal (UTF-8). CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!-- Visualization & Content Choices: Pengelompokan data menggunakan komponen HTML/CSS responsive, indikator badge status sinkronisasi pada kartu Dinas Jaga, stepper interaktif untuk hitung cepat pasien per kategori, serta bottom sheet untuk pratinjau format teks laporan siap kirim. CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 <meta charset="UTF-8">
-<!-- GitHub Pages safe build: source file is ASCII-only; Unicode is emitted at runtime. -->
+<!-- GitHub Pages safe build: source file is ASCII-only. -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>Serah Terima Jaga Apotek &mdash; Rumkit TNI AD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -372,7 +372,7 @@
     border:1px solid var(--line);
     border-radius:8px;
     padding:10px;
-    font-family:'Inter','Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif;
+    font-family:'Inter',sans-serif;
     font-size:13px;
     line-height:1.5;
     white-space:pre-wrap;
@@ -534,28 +534,6 @@
 // Contoh: const GAS_URL = "https://script.google.com/macros/s/AKfycb.../exec";
 // =========================================================================
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwDoXb0WYIfdWB2yKxJwet_HPBt3Weh-jtgCHLm6AIui0UKHPx5fRv850nZFLifzCk/exec"; 
-
-
-// =========================================================================
-// KONSTANTA EMOJI PENUTUP LAPORAN: 🙏 (U+1F64F)
-// PENTING: Emoji dibentuk dengan escape ES6 '\u{...}' agar identik dengan
-// ikon tema header, sehingga tidak bergantung pada encoding byte file
-// sumber. Cara ini menjamin emoji selalu valid (bukan dua surrogate yang
-// mudah terpecah menjadi karakter pengganti U+FFFD / '�').
-// =========================================================================
-const PRAYER_EMOJI = '\u{1F64F}';
-
-// Verifikasi saat halaman dimuat (cek Console bila perlu)
-(function verifyEmoji(){
-  const ok = PRAYER_EMOJI.length === 2 &&
-             PRAYER_EMOJI.codePointAt(0) === 0x1F64F;
-  if (!ok) {
-    console.error('PRAYER_EMOJI tidak valid. Pastikan file HTML disimpan sebagai UTF-8.');
-  } else {
-    console.log('Emoji OK: U+' +
-      PRAYER_EMOJI.codePointAt(0).toString(16).toUpperCase());
-  }
-})();
 
 
 // ---------- DARK THEME TOGGLE ----------
@@ -1015,8 +993,7 @@ function buildReport(){
   });
 
   lines.push('Rumkit TNI-AD dalam keadaan aman,');
-  // Emoji 🙏 dibentuk via escape ES6, bukan surrogate manual.
-  lines.push('Laporan Selesai ' + PRAYER_EMOJI);
+  lines.push('Laporan Selesai.');
 
   return lines.join('\n').replace(/\n{3,}/g,'\n\n');
 }
@@ -1039,21 +1016,9 @@ function setPanelState(maximized){
 previewBar.addEventListener('click', ()=> setPanelState(!panel.classList.contains('maximized')));
 
 // ---------- Teks laporan untuk clipboard / WhatsApp ----------
-// Selalu bentuk ulang bagian penutup dengan emoji valid, agar karakter
-// pengganti U+FFFD ('�') tidak pernah ikut terkirim.
 function getSafeReportText(){
   const ta = document.getElementById('outputText');
-  let text = ta.value || '';
-  const marker = 'Laporan Selesai';
-  const pos = text.lastIndexOf(marker);
-
-  if (pos >= 0) {
-    // Ambil sampai kata kunci, lalu tempel ulang emoji yang valid.
-    text = text.slice(0, pos + marker.length) + ' ' + PRAYER_EMOJI;
-  } else {
-    text = text.trimEnd() + '\n' + PRAYER_EMOJI;
-  }
-
+  const text = ta.value || '';
   return text.normalize('NFC');
 }
 
@@ -1070,7 +1035,6 @@ document.getElementById('copyBtn').addEventListener('click', async (e)=>{
     await navigator.clipboard.writeText(safeText);
     copied = true;
   }catch(err){
-    // Fallback: tetap salin safeText, bukan isi textarea yang mungkin rusak.
     try{
       const originalText = ta.value;
       ta.value = safeText;
