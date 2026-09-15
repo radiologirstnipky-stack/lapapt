@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<!-- Chosen Palette: Military Pharmacy Olive & Brass (dengan Mode Gelap Warm Neutral) -->
-<!-- Application Structure Plan: Aplikasi web satu halaman (SPA) berfokus pada efisiensi operasional petugas Apotek Rumkit TNI AD. Konfigurasi URL Google Apps Script diletakkan di dalam variabel JavaScript file HTML (const GAS_URL) untuk menjaga kebersihan UI utama. UI terdiri dari Header (jam WIB & tombol Dark Mode), Pemilih Tanggal, Input Petugas Dinas Jaga dengan chip nama tersimpan & status sinkronisasi, Accordion Kategori Pelayanan Pasien dengan stepper, serta Bottom Preview Sheet interaktif. -->
-<!-- Visualization & Content Choices: Pengelompokan data menggunakan komponen HTML/CSS responsive, indikator badge status sinkronisasi pada kartu Dinas Jaga, stepper interaktif untuk hitung cepat pasien per kategori, serta bottom sheet untuk pratinjau format teks laporan siap kirim dengan dukungan emoji universal (UTF-8). CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>Serah Terima Jaga Apotek — Rumkit TNI AD</title>
@@ -993,15 +989,19 @@ function buildReport(){
 
   lines.push('Rumkit TNI-AD dalam keadaan aman,');
   
-  // Menggunakan Emoji UTF-8 Standar (Universal: PC, Android, iPhone, WhatsApp)
-  lines.push('Laporan Selesai ' + String.fromCodePoint(0x1F64F));
+  // Buat emoji saat runtime; tidak bergantung pada encoding file HTML.
+  const selesaiEmoji = String.fromCodePoint(0x1F64F);
+  lines.push('Laporan Selesai ' + selesaiEmoji);
 
   return lines.join('\n').replace(/\n{3,}/g,'\n\n');
 }
 
 function refreshPreview(){
   const ta = document.getElementById('outputText');
-  ta.value = buildReport();
+  const selesaiEmoji = String.fromCodePoint(0x1F64F);
+  let report = buildReport();
+  report = report.replace(/Laporan Selesai\s*[\uFFFD]+/u, 'Laporan Selesai ' + selesaiEmoji);
+  ta.value = report;
 }
 
 // ---------- Bottom sheet minimize/maximize ----------
@@ -1046,7 +1046,11 @@ document.getElementById('waBtn').addEventListener('click', (e)=>{
   const btn = e.currentTarget;
   const span = btn.querySelector('span:last-child');
   const original = span.textContent;
-  const text = document.getElementById('outputText').value;
+  let text = document.getElementById('outputText').value;
+  const selesaiEmoji = String.fromCodePoint(0x1F64F);
+  // Jika deployment lama sudah menghasilkan karakter pengganti, perbaiki di sini.
+  text = text.replace(/Laporan Selesai\s*[\uFFFD]+/u, 'Laporan Selesai ' + selesaiEmoji);
+  text = text.replace(/Laporan Selesai[^\n]*/u, 'Laporan Selesai ' + selesaiEmoji);
   const safeText = text.normalize('NFC');
   const url = 'https://wa.me/?text=' + encodeURIComponent(safeText);
   window.open(url, '_blank');
