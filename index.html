@@ -983,7 +983,7 @@ function buildReport(){
   lines.push('Keterangan :');
 
   CATEGORIES.forEach(c=>{
-    const total = c.subs.reduce((s,k)=> s + state[c.code][s], 0);
+    const total = c.subs.reduce((sum,sub)=> sum + state[c.code][sub], 0);
     lines.push(`${c.code}. ${c.title} : ${fmtVal(total)}`);
     if(c.hasKet) lines.push('Ket :');
     c.subs.forEach((sub,i)=>{
