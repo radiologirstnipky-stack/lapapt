@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<!-- Chosen Palette: Military Pharmacy Olive & Brass (dengan Mode Gelap Warm Neutral) -->
+<!-- Application Structure Plan: Aplikasi web satu halaman (SPA) berfokus pada efisiensi operasional petugas Apotek Rumkit TNI AD. Konfigurasi URL Google Apps Script diletakkan di dalam variabel JavaScript file HTML (const GAS_URL) untuk menjaga kebersihan UI utama. UI terdiri dari Header (jam WIB & tombol Dark Mode), Pemilih Tanggal, Input Petugas Dinas Jaga dengan chip nama tersimpan & status sinkronisasi, Accordion Kategori Pelayanan Pasien dengan stepper, serta Bottom Preview Sheet interaktif. -->
+<!-- Visualization & Content Choices: Pengelompokan data menggunakan komponen HTML/CSS responsive, indikator badge status sinkronisasi pada kartu Dinas Jaga, stepper interaktif untuk hitung cepat pasien per kategori, serta bottom sheet untuk pratinjau format teks laporan siap kirim dengan dukungan emoji universal (UTF-8). CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 <meta charset="UTF-8">
+<!-- GitHub Pages safe build: source file is ASCII-only; Unicode is emitted at runtime. -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>Serah Terima Jaga Apotek — Rumkit TNI AD</title>
+<title>Serah Terima Jaga Apotek &mdash; Rumkit TNI AD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -409,12 +414,12 @@
 <div class="head">
   <div class="head-top">
     <div>
-      <p class="head-eyebrow">RUMKIT TNI AD · APOTEK</p>
+      <p class="head-eyebrow">RUMKIT TNI AD &middot; APOTEK</p>
       <p class="greeting" id="greetingText">Selamat pagi</p>
     </div>
     <div class="head-right">
       <button type="button" class="theme-toggle-btn" id="themeToggleBtn">
-        <span id="themeIcon">🌙</span> <span id="themeText">Gelap</span>
+        <span id="themeIcon">&#x1F319;</span> <span id="themeText">Gelap</span>
       </button>
       <div class="clock">
         <div class="clock-time" id="clockTime">--:--</div>
@@ -434,7 +439,7 @@
       <label for="manualDateToggle">Isi tanggal manual</label>
     </div>
     <div class="field" id="autoDateField">
-      <div class="date-preview" id="dateAutoPreview">—</div>
+      <div class="date-preview" id="dateAutoPreview">&mdash;</div>
     </div>
     <div class="field" id="manualDateField" style="display:none;">
       <input type="date" id="manualDateInput">
@@ -447,7 +452,7 @@
       <span>Dinas Jaga</span>
       <span class="sync-badge" id="syncStatus">Lokal</span>
     </div>
-    <div class="hint" style="margin-bottom:8px;">Terisi otomatis sesuai jam WIB saat ini — pilih manual kapan saja jika perlu.</div>
+    <div class="hint" style="margin-bottom:8px;">Terisi otomatis sesuai jam WIB saat ini &mdash; pilih manual kapan saja jika perlu.</div>
 
     <div class="dinas-row">
       <select class="dinas-label-select" id="shiftSelect1">
@@ -503,18 +508,18 @@
       <span class="preview-bar-title">Preview Laporan</span>
     </div>
     <div class="preview-bar-actions">
-      <button type="button" class="icon-btn" id="toggleBtn" title="Maximize">▲</button>
+      <button type="button" class="icon-btn" id="toggleBtn" title="Maximize">&#x25B2;</button>
     </div>
   </div>
   <div class="preview-body">
     <textarea id="outputText" readonly></textarea>
     <div class="action-row">
       <button type="button" class="action-btn" id="waBtn">
-        <span class="btn-icon">💬</span>
+        <span class="btn-icon">&#x1F4AC;</span>
         <span>Kirim ke WhatsApp</span>
       </button>
       <button type="button" class="action-btn" id="copyBtn">
-        <span class="btn-icon" id="copyBtnIcon">⧉</span>
+        <span class="btn-icon" id="copyBtnIcon">&#x29C9;</span>
         <span id="copyBtnLabel">Salin Teks</span>
       </button>
     </div>
@@ -540,11 +545,11 @@ function initTheme() {
   const isDark = localStorage.getItem('theme') === 'dark';
   if (isDark) {
     document.body.classList.add('dark-mode');
-    themeIcon.textContent = '☀️';
+    themeIcon.textContent = '\u2600\uFE0F';
     themeText.textContent = 'Terang';
   } else {
     document.body.classList.remove('dark-mode');
-    themeIcon.textContent = '🌙';
+    themeIcon.textContent = '\u{1F319}';
     themeText.textContent = 'Gelap';
   }
 }
@@ -552,7 +557,7 @@ function initTheme() {
 themeToggleBtn.addEventListener('click', () => {
   const isDark = document.body.classList.toggle('dark-mode');
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  themeIcon.textContent = isDark ? '☀️' : '🌙';
+  themeIcon.textContent = isDark ? '\u2600\uFE0F' : '\u{1F319}';
   themeText.textContent = isDark ? 'Terang' : 'Gelap';
 });
 
@@ -606,7 +611,7 @@ CATEGORIES.forEach(c=>{
     row.innerHTML = `
       <span class="sub-label">${sub}</span>
       <span class="stepper">
-        <button type="button" class="minus" data-code="${c.code}" data-sub="${sub}" aria-label="Kurangi ${sub}">−</button>
+        <button type="button" class="minus" data-code="${c.code}" data-sub="${sub}" aria-label="Kurangi ${sub}">&minus;</button>
         <span class="count" id="count-${c.code}-${sub.replace(/\W/g,'')}">0</span>
         <button type="button" class="plus" data-code="${c.code}" data-sub="${sub}" aria-label="Tambah ${sub}">+</button>
       </span>
@@ -989,19 +994,17 @@ function buildReport(){
 
   lines.push('Rumkit TNI-AD dalam keadaan aman,');
   
-  // Buat emoji saat runtime; tidak bergantung pada encoding file HTML.
-  const selesaiEmoji = String.fromCodePoint(0x1F64F);
-  lines.push('Laporan Selesai ' + selesaiEmoji);
+  // Menggunakan Emoji UTF-8 Standar (Universal: PC, Android, iPhone, WhatsApp)
+  lines.push('Laporan Selesai ' + String.fromCodePoint(0x1F64F));
 
-  return lines.join('\n').replace(/\n{3,}/g,'\n\n');
+  return lines.join('\n')
+    .replace(/\uFFFD/g, String.fromCodePoint(0x1F64F))
+    .replace(/\n{3,}/g,'\n\n');
 }
 
 function refreshPreview(){
   const ta = document.getElementById('outputText');
-  const selesaiEmoji = String.fromCodePoint(0x1F64F);
-  let report = buildReport();
-  report = report.replace(/Laporan Selesai\s*[\uFFFD]+/u, 'Laporan Selesai ' + selesaiEmoji);
-  ta.value = report;
+  ta.value = buildReport();
 }
 
 // ---------- Bottom sheet minimize/maximize ----------
@@ -1011,7 +1014,7 @@ const toggleBtn = document.getElementById('toggleBtn');
 
 function setPanelState(maximized){
   panel.classList.toggle('maximized', maximized);
-  toggleBtn.textContent = maximized ? '▼' : '▲';
+  toggleBtn.textContent = maximized ? '\u25BC' : '\u25B2';
   toggleBtn.title = maximized ? 'Minimize' : 'Maximize';
 }
 previewBar.addEventListener('click', ()=> setPanelState(!panel.classList.contains('maximized')));
@@ -1031,10 +1034,10 @@ document.getElementById('copyBtn').addEventListener('click', async (e)=>{
     document.execCommand('copy');
     note.textContent = 'Teks berhasil disalin.';
   }
-  copyBtnIcon.textContent = '✓';
+  copyBtnIcon.textContent = '\u2713';
   copyBtnLabel.textContent = 'Tersalin!';
   setTimeout(()=>{
-    copyBtnIcon.textContent = '⧉';
+    copyBtnIcon.textContent = '\u29C9';
     copyBtnLabel.textContent = 'Salin Teks';
     note.textContent='';
   }, 2200);
@@ -1046,15 +1049,11 @@ document.getElementById('waBtn').addEventListener('click', (e)=>{
   const btn = e.currentTarget;
   const span = btn.querySelector('span:last-child');
   const original = span.textContent;
-  let text = document.getElementById('outputText').value;
-  const selesaiEmoji = String.fromCodePoint(0x1F64F);
-  // Jika deployment lama sudah menghasilkan karakter pengganti, perbaiki di sini.
-  text = text.replace(/Laporan Selesai\s*[\uFFFD]+/u, 'Laporan Selesai ' + selesaiEmoji);
-  text = text.replace(/Laporan Selesai[^\n]*/u, 'Laporan Selesai ' + selesaiEmoji);
+  const text = document.getElementById('outputText').value;
   const safeText = text.normalize('NFC');
   const url = 'https://wa.me/?text=' + encodeURIComponent(safeText);
   window.open(url, '_blank');
-  span.textContent = 'Membuka WhatsApp…';
+  span.textContent = 'Membuka WhatsApp\u2026';
   setTimeout(()=> span.textContent = original, 1800);
 });
 
