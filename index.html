@@ -995,10 +995,10 @@ function buildReport(){
   lines.push('Rumkit TNI-AD dalam keadaan aman,');
   
   // Menggunakan Emoji UTF-8 Standar (Universal: PC, Android, iPhone, WhatsApp)
-  lines.push('Laporan Selesai ' + String.fromCodePoint(0x1F64F));
+  lines.push('Laporan Selesai ' + String.fromCharCode(0xD83D,0xDE4F));
 
   return lines.join('\n')
-    .replace(/\uFFFD/g, String.fromCodePoint(0x1F64F))
+    .replace(/\uFFFD/g, String.fromCharCode(0xD83D,0xDE4F))
     .replace(/\n{3,}/g,'\n\n');
 }
 
@@ -1019,6 +1019,26 @@ function setPanelState(maximized){
 }
 previewBar.addEventListener('click', ()=> setPanelState(!panel.classList.contains('maximized')));
 
+// ---------- Teks laporan untuk clipboard / WhatsApp ----------
+// Selalu bentuk emoji secara runtime, sehingga yang masuk clipboard adalah
+// karakter Unicode U+1F64F (U+1F64F), bukan karakter pengganti U+FFFD (U+FFFD).
+function getSafeReportText(){
+  const ta = document.getElementById('outputText');
+  let text = ta.value;
+  const prayer = String.fromCharCode(0xD83D,0xDE4F);
+  const marker = 'Laporan Selesai';
+  const pos = text.lastIndexOf(marker);
+
+  if (pos >= 0) {
+    // Perbaiki hanya bagian penutup laporan.
+    text = text.slice(0, pos + marker.length) + ' ' + prayer;
+  } else {
+    text = text.replace(/\uFFFD/g, prayer);
+  }
+
+  return text.normalize('NFC');
+}
+
 // ---------- Copy ----------
 const copyBtnLabel = document.getElementById('copyBtnLabel');
 const copyBtnIcon = document.getElementById('copyBtnIcon');
@@ -1026,12 +1046,17 @@ document.getElementById('copyBtn').addEventListener('click', async (e)=>{
   e.stopPropagation();
   const ta = document.getElementById('outputText');
   const note = document.getElementById('copyNote');
+  const safeText = getSafeReportText();
   try{
-    await navigator.clipboard.writeText(ta.value);
+    await navigator.clipboard.writeText(safeText);
     note.textContent = 'Teks berhasil disalin.';
   }catch(err){
+    // Fallback juga menyalin safeText, bukan isi textarea yang mungkin rusak.
+    const originalText = ta.value;
+    ta.value = safeText;
     ta.select();
     document.execCommand('copy');
+    ta.value = originalText;
     note.textContent = 'Teks berhasil disalin.';
   }
   copyBtnIcon.textContent = '\u2713';
@@ -1049,8 +1074,7 @@ document.getElementById('waBtn').addEventListener('click', (e)=>{
   const btn = e.currentTarget;
   const span = btn.querySelector('span:last-child');
   const original = span.textContent;
-  const text = document.getElementById('outputText').value;
-  const safeText = text.normalize('NFC');
+  const safeText = getSafeReportText();
   const url = 'https://wa.me/?text=' + encodeURIComponent(safeText);
   window.open(url, '_blank');
   span.textContent = 'Membuka WhatsApp\u2026';
