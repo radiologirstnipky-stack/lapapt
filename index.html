@@ -130,7 +130,7 @@
     display:grid;
     grid-template-columns:96px 1fr;
     gap:10px;
-    align-items:center;
+    align-items:start;
     padding:8px 0;
   }
   .dinas-row + .dinas-row{border-top:1px solid var(--line);}
@@ -148,6 +148,49 @@
   }
   .dinas-label-select:focus{outline:2px solid var(--green-700);outline-offset:1px;}
   .name-input-wrap{position:relative;}
+  .added-names{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    margin-bottom:6px;
+  }
+  .added-name-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
+    background:#eef2ea;
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:5px 5px 5px 9px;
+    font-size:13px;
+    color:var(--green-900);
+  }
+  .added-name-row .rm{
+    cursor:pointer;
+    color:#a13e3e;
+    font-weight:700;
+    padding:2px 6px;
+    line-height:1;
+  }
+  .name-add-line{
+    display:flex;
+    gap:6px;
+  }
+  .name-add-line input{flex:1;}
+  .add-name-btn{
+    width:38px;
+    flex-shrink:0;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--green-800);
+    color:#fff;
+    font-size:18px;
+    font-weight:700;
+    cursor:pointer;
+    line-height:1;
+  }
+  .add-name-btn:active{background:var(--green-700);}
   .saved-names{
     display:flex;
     flex-wrap:wrap;
@@ -238,8 +281,6 @@
     display:flex;align-items:center;justify-content:center;cursor:pointer;
   }
   .icon-btn:active{background:rgba(255,255,255,.22);}
-  #waBtn{background:#25D366;border-color:#25D366;}
-  #waBtn:active{background:#1fb959;}
   .preview-body{
     flex:1;
     overflow:hidden;
@@ -262,19 +303,32 @@
     background:#fbfbfa;
     min-height:0;
   }
-  .copy-btn{
-    margin-top:8px;
-    padding:11px;
-    background:var(--brass-600);
-    color:#fff;
-    border:none;
-    border-radius:9px;
-    font-weight:700;
-    font-size:14px;
-    cursor:pointer;
+  .action-row{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
   }
-  .copy-btn:active{background:var(--brass-500);}
-  .copy-note{text-align:center;font-size:12px;color:var(--text-dim);margin-top:5px;height:14px;}
+  .action-btn{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:14px 10px;
+    border:none;
+    border-radius:10px;
+    font-weight:700;
+    font-size:14.5px;
+    cursor:pointer;
+    color:#fff;
+    font-family:'Inter',sans-serif;
+  }
+  .action-btn svg{flex-shrink:0;}
+  #waBtn{background:#25D366;}
+  #waBtn:active{background:#1fb959;}
+  #copyBtn{background:var(--brass-600);}
+  #copyBtn:active{background:var(--brass-500);}
+  .copy-note{text-align:center;font-size:12px;color:var(--text-dim);margin-top:6px;height:14px;}
   #bottomSpacer{height:66px;}
 </style>
 </head>
@@ -313,6 +367,7 @@
   <!-- DINAS -->
   <div class="card">
     <div class="card-title">Dinas Jaga</div>
+    <div class="hint" style="margin-bottom:8px;">Terisi otomatis sesuai jam WIB saat ini — pilih manual kapan saja jika perlu.</div>
 
     <div class="dinas-row">
       <select class="dinas-label-select" id="shiftSelect1">
@@ -321,7 +376,11 @@
         <option value="malam">Dinas Malam</option>
       </select>
       <div class="name-input-wrap">
-        <input type="text" id="nameInput1" placeholder="Nama petugas">
+        <div class="added-names" id="addedNames1"></div>
+        <div class="name-add-line">
+          <input type="text" id="nameInput1" placeholder="Ketik nama, lalu Enter">
+          <button type="button" class="add-name-btn" data-row="1" aria-label="Tambah nama">+</button>
+        </div>
         <div class="saved-names" id="savedNames1"></div>
       </div>
     </div>
@@ -333,7 +392,11 @@
         <option value="malam" selected>Dinas Malam</option>
       </select>
       <div class="name-input-wrap">
-        <input type="text" id="nameInput2" placeholder="Nama petugas">
+        <div class="added-names" id="addedNames2"></div>
+        <div class="name-add-line">
+          <input type="text" id="nameInput2" placeholder="Ketik nama, lalu Enter">
+          <button type="button" class="add-name-btn" data-row="2" aria-label="Tambah nama">+</button>
+        </div>
         <div class="saved-names" id="savedNames2"></div>
       </div>
     </div>
@@ -360,15 +423,21 @@
       <span class="preview-bar-title">Preview Laporan</span>
     </div>
     <div class="preview-bar-actions">
-      <button type="button" class="icon-btn" id="waBtn" title="Kirim ke WhatsApp">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.41-1.42a9.87 9.87 0 0 0 4.63 1.18h.01c5.46 0 9.9-4.45 9.9-9.9C21.95 6.45 17.5 2 12.04 2Zm5.8 14.06c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.16-4.94-4.35-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.27-.29.58-.36.78-.36.2 0 .39 0 .56.01.18.01.42-.07.65.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.13.63-.08.17-.2.72-.84.91-1.13.19-.29.39-.24.65-.14.27.1 1.71.81 2 .96.29.14.48.21.55.33.07.12.07.68-.17 1.36Z"/></svg>
-      </button>
-      <button type="button" class="icon-btn" id="copyBtn" title="Salin teks">⧉</button>
       <button type="button" class="icon-btn" id="toggleBtn" title="Maximize">▲</button>
     </div>
   </div>
   <div class="preview-body">
     <textarea id="outputText" readonly></textarea>
+    <div class="action-row">
+      <button type="button" class="action-btn" id="waBtn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.41-1.42a9.87 9.87 0 0 0 4.63 1.18h.01c5.46 0 9.9-4.45 9.9-9.9C21.95 6.45 17.5 2 12.04 2Zm5.8 14.06c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.16-4.94-4.35-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.27-.29.58-.36.78-.36.2 0 .39 0 .56.01.18.01.42-.07.65.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.13.63-.08.17-.2.72-.84.91-1.13.19-.29.39-.24.65-.14.27.1 1.71.81 2 .96.29.14.48.21.55.33.07.12.07.68-.17 1.36Z"/></svg>
+        <span>Kirim ke WhatsApp</span>
+      </button>
+      <button type="button" class="action-btn" id="copyBtn">
+        <span id="copyBtnIcon">⧉</span>
+        <span id="copyBtnLabel">Salin Teks</span>
+      </button>
+    </div>
     <div class="copy-note" id="copyNote"></div>
   </div>
 </div>
@@ -501,6 +570,7 @@ function tickClock(){
     const dname = dayNameFromDate(wib.year, wib.month, wib.day);
     document.getElementById('dateAutoPreview').textContent = `${dname}, ${pad2(wib.day)}/${pad2(wib.month)}/${wib.year}`;
   }
+  applyAutoShift();
   refreshPreview();
 }
 // NOTE: tickClock() is invoked later, at the end of the script, once every
@@ -536,78 +606,155 @@ function getReportDateString(){
   return document.getElementById('dateAutoPreview').textContent;
 }
 
-// ---------- Dinas: dropdown shift per baris + saved names via window.storage ----------
+// ---------- Dinas: dropdown shift per baris + banyak nama per baris + saved names via window.storage ----------
 const SHIFT_WORD = { pagi:'pagi', siang:'siang', malam:'malam' };
-const STORAGE_KEYS = { pagi:'dinas-nama-pagi', siang:'dinas-nama-siang', malam:'dinas-nama-malam' };
-let savedNamesCache = { pagi:[], siang:[], malam:[] };
+// Satu daftar nama pegawai tersimpan, dipakai bersama untuk semua shift (pagi/siang/malam)
+// karena pegawainya sama saja. Disimpan sebagai data BERSAMA (shared) via window.storage
+// supaya sinkron di manapun form ini dibuka, bukan hanya di perangkat/browser ini.
+const STORAGE_KEY = 'dinas-nama-tersimpan';
+let savedNamesCache = [];
 
-async function loadSavedNames(shift){
+// Daftar nama yang sudah ditambahkan ke masing-masing baris dinas (bisa lebih dari satu nama)
+const namesByRow = { 1:[], 2:[] };
+
+async function loadSavedNames(){
   try{
-    const res = await window.storage.get(STORAGE_KEYS[shift], false);
+    const res = await window.storage.get(STORAGE_KEY, true);
     const list = res && res.value ? JSON.parse(res.value) : [];
-    savedNamesCache[shift] = Array.isArray(list) ? list : [];
+    savedNamesCache = Array.isArray(list) ? list : [];
   }catch(err){
-    savedNamesCache[shift] = [];
+    savedNamesCache = [];
   }
   renderSavedNames(1);
   renderSavedNames(2);
 }
 
-async function saveNameIfNew(shift, name){
+async function saveNameIfNew(name){
   name = name.trim();
   if(!name) return;
-  if(savedNamesCache[shift].includes(name)) return;
-  savedNamesCache[shift] = [name, ...savedNamesCache[shift]].slice(0,10);
+  if(savedNamesCache.includes(name)) return;
+  savedNamesCache = [name, ...savedNamesCache].slice(0,20);
   try{
-    await window.storage.set(STORAGE_KEYS[shift], JSON.stringify(savedNamesCache[shift]), false);
+    await window.storage.set(STORAGE_KEY, JSON.stringify(savedNamesCache), true);
   }catch(err){ /* storage unavailable, keep in-memory only */ }
   renderSavedNames(1);
   renderSavedNames(2);
 }
 
-async function removeName(shift, name){
-  savedNamesCache[shift] = savedNamesCache[shift].filter(n=> n!==name);
+async function removeName(name){
+  savedNamesCache = savedNamesCache.filter(n=> n!==name);
   try{
-    await window.storage.set(STORAGE_KEYS[shift], JSON.stringify(savedNamesCache[shift]), false);
+    await window.storage.set(STORAGE_KEY, JSON.stringify(savedNamesCache), true);
   }catch(err){}
   renderSavedNames(1);
   renderSavedNames(2);
 }
 
+// Penentuan shift otomatis berdasarkan waktu WIB saat ini.
+// Baris 1 = shift yang baru saja turun/selesai, Baris 2 = shift yang sedang/baru naik.
+// Jika user mengubah salah satu dropdown secara manual, baris tsb berhenti mengikuti waktu otomatis.
+const SHIFT_ORDER = ['pagi','siang','malam'];
+const manualOverride = { 1:false, 2:false };
+
+function getCurrentShiftByHour(h){
+  if(h>=7 && h<14) return 'pagi';
+  if(h>=14 && h<21) return 'siang';
+  return 'malam';
+}
+function getPrevShift(shift){
+  const idx = SHIFT_ORDER.indexOf(shift);
+  return SHIFT_ORDER[(idx+2)%3];
+}
+
+function applyAutoShift(){
+  const wib = getWIBParts();
+  const current = getCurrentShiftByHour(wib.hour);
+  const previous = getPrevShift(current);
+  let changed = false;
+  if(!manualOverride[1] && slotEls[1].select.value !== previous){
+    slotEls[1].select.value = previous;
+    slotEls[1].select.dataset.prev = previous;
+    changed = true;
+  }
+  if(!manualOverride[2] && slotEls[2].select.value !== current){
+    slotEls[2].select.value = current;
+    slotEls[2].select.dataset.prev = current;
+    changed = true;
+  }
+  if(changed){
+    renderSavedNames(1);
+    renderSavedNames(2);
+  }
+}
+
 const slotEls = {
-  1:{ select:document.getElementById('shiftSelect1'), input:document.getElementById('nameInput1'), holder:document.getElementById('savedNames1') },
-  2:{ select:document.getElementById('shiftSelect2'), input:document.getElementById('nameInput2'), holder:document.getElementById('savedNames2') },
+  1:{ select:document.getElementById('shiftSelect1'), input:document.getElementById('nameInput1'), holder:document.getElementById('savedNames1'), addedHolder:document.getElementById('addedNames1') },
+  2:{ select:document.getElementById('shiftSelect2'), input:document.getElementById('nameInput2'), holder:document.getElementById('savedNames2'), addedHolder:document.getElementById('addedNames2') },
 };
 
 function renderSavedNames(rowNum){
-  const { select, input, holder } = slotEls[rowNum];
-  const shift = select.value;
+  const { holder } = slotEls[rowNum];
   holder.innerHTML='';
-  savedNamesCache[shift].forEach(name=>{
+  savedNamesCache.forEach(name=>{
     const chip = document.createElement('span');
     chip.className='saved-chip';
     chip.innerHTML = `${name}<span class="rm">&times;</span>`;
     chip.addEventListener('click', (e)=>{
       if(e.target.classList.contains('rm')){
         e.stopPropagation();
-        removeName(shift, name);
+        removeName(name);
         return;
       }
-      input.value = name;
-      refreshPreview();
+      addName(rowNum, name);
     });
     holder.appendChild(chip);
   });
 }
 
+function renderAddedNames(rowNum){
+  const { addedHolder } = slotEls[rowNum];
+  addedHolder.innerHTML = '';
+  namesByRow[rowNum].forEach((name, idx)=>{
+    const row = document.createElement('div');
+    row.className = 'added-name-row';
+    row.innerHTML = `<span>${name}</span><span class="rm" data-row="${rowNum}" data-idx="${idx}" aria-label="Hapus ${name}">&times;</span>`;
+    addedHolder.appendChild(row);
+  });
+}
+
+function addName(rowNum, name){
+  name = (name||'').trim();
+  if(!name) return;
+  namesByRow[rowNum].push(name);
+  renderAddedNames(rowNum);
+  saveNameIfNew(name);
+  refreshPreview();
+}
+
+function removeAddedName(rowNum, idx){
+  namesByRow[rowNum].splice(idx,1);
+  renderAddedNames(rowNum);
+  refreshPreview();
+}
+
+document.addEventListener('click', (e)=>{
+  const rm = e.target.closest('.added-name-row .rm');
+  if(rm){
+    removeAddedName(Number(rm.dataset.row), Number(rm.dataset.idx));
+  }
+});
+
 function handleShiftChange(rowNum){
+  const otherRow = rowNum===1 ? 2 : 1;
   const changed = slotEls[rowNum];
-  const other = slotEls[rowNum===1 ? 2 : 1];
+  const other = slotEls[otherRow];
   const newVal = changed.select.value;
+  manualOverride[rowNum] = true;
   if(other.select.value === newVal){
     // swap to avoid duplicate shift on both rows
     other.select.value = changed.select.dataset.prev || (newVal==='pagi' ? 'malam' : 'pagi');
-    renderSavedNames(rowNum===1 ? 2 : 1);
+    manualOverride[otherRow] = true;
+    renderSavedNames(otherRow);
   }
   changed.select.dataset.prev = newVal;
   renderSavedNames(rowNum);
@@ -620,17 +767,27 @@ slotEls[1].select.addEventListener('change', ()=> handleShiftChange(1));
 slotEls[2].select.addEventListener('change', ()=> handleShiftChange(2));
 
 [1,2].forEach(rowNum=>{
-  const { select, input } = slotEls[rowNum];
-  input.addEventListener('input', refreshPreview);
-  input.addEventListener('change', ()=> saveNameIfNew(select.value, input.value));
+  const { input } = slotEls[rowNum];
   input.addEventListener('keydown', (e)=>{
-    if(e.key==='Enter'){ saveNameIfNew(select.value, input.value); input.blur(); }
+    if(e.key==='Enter'){
+      e.preventDefault();
+      addName(rowNum, input.value);
+      input.value='';
+    }
   });
 });
 
-loadSavedNames('pagi');
-loadSavedNames('siang');
-loadSavedNames('malam');
+document.querySelectorAll('.add-name-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const rowNum = Number(btn.dataset.row);
+    const input = slotEls[rowNum].input;
+    addName(rowNum, input.value);
+    input.value='';
+    input.focus();
+  });
+});
+
+loadSavedNames();
 
 // ---------- Build report text (live) ----------
 function fmtVal(n){ return n>0 ? `${n} orang` : 'nihil'; }
@@ -645,10 +802,14 @@ function buildReport(){
   lines.push(`*${tanggal}* sebagai berikut:`);
   lines.push('');
   [1,2].forEach(rowNum=>{
-    const { select, input } = slotEls[rowNum];
-    const name = input.value.trim();
+    const { select } = slotEls[rowNum];
+    const names = namesByRow[rowNum];
     lines.push(`*Dinas ${SHIFT_WORD[select.value]}*`);
-    lines.push(name || '-');
+    if(names.length){
+      names.forEach(n=> lines.push(n));
+    } else {
+      lines.push('-');
+    }
     lines.push('');
   });
   lines.push('');
@@ -672,7 +833,6 @@ function buildReport(){
 
 function refreshPreview(){
   const ta = document.getElementById('outputText');
-  const pos = ta.selectionStart;
   ta.value = buildReport();
 }
 
@@ -689,6 +849,8 @@ function setPanelState(maximized){
 previewBar.addEventListener('click', ()=> setPanelState(!panel.classList.contains('maximized')));
 
 // ---------- Copy ----------
+const copyBtnLabel = document.getElementById('copyBtnLabel');
+const copyBtnIcon = document.getElementById('copyBtnIcon');
 document.getElementById('copyBtn').addEventListener('click', async (e)=>{
   e.stopPropagation();
   const ta = document.getElementById('outputText');
@@ -701,15 +863,26 @@ document.getElementById('copyBtn').addEventListener('click', async (e)=>{
     document.execCommand('copy');
     note.textContent = 'Teks berhasil disalin.';
   }
-  setTimeout(()=> note.textContent='', 2200);
+  copyBtnIcon.textContent = '✓';
+  copyBtnLabel.textContent = 'Tersalin!';
+  setTimeout(()=>{
+    copyBtnIcon.textContent = '⧉';
+    copyBtnLabel.textContent = 'Salin Teks';
+    note.textContent='';
+  }, 2200);
 });
 
 // ---------- Kirim ke WhatsApp ----------
 document.getElementById('waBtn').addEventListener('click', (e)=>{
   e.stopPropagation();
+  const btn = e.currentTarget;
+  const span = btn.querySelector('span:last-child');
+  const original = span.textContent;
   const text = document.getElementById('outputText').value;
   const url = 'https://wa.me/?text=' + encodeURIComponent(text);
   window.open(url, '_blank');
+  span.textContent = 'Membuka WhatsApp…';
+  setTimeout(()=> span.textContent = original, 1800);
 });
 
 // ---------- Init ----------
