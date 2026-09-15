@@ -994,7 +994,7 @@ function buildReport(){
   lines.push('Rumkit TNI-AD dalam keadaan aman,');
   
   // Menggunakan Emoji UTF-8 Standar (Universal: PC, Android, iPhone, WhatsApp)
-  lines.push('Laporan Selesai \u{1F64F}');
+  lines.push('Laporan Selesai ' + String.fromCodePoint(0x1F64F));
 
   return lines.join('\n').replace(/\n{3,}/g,'\n\n');
 }
@@ -1047,7 +1047,8 @@ document.getElementById('waBtn').addEventListener('click', (e)=>{
   const span = btn.querySelector('span:last-child');
   const original = span.textContent;
   const text = document.getElementById('outputText').value;
-  const url = 'https://wa.me/?text=' + encodeURIComponent(text);
+  const safeText = text.normalize('NFC');
+  const url = 'https://wa.me/?text=' + encodeURIComponent(safeText);
   window.open(url, '_blank');
   span.textContent = 'Membuka WhatsApp…';
   setTimeout(()=> span.textContent = original, 1800);
