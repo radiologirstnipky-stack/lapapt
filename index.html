@@ -536,6 +536,28 @@
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwDoXb0WYIfdWB2yKxJwet_HPBt3Weh-jtgCHLm6AIui0UKHPx5fRv850nZFLifzCk/exec"; 
 
 
+// =========================================================================
+// KONSTANTA EMOJI PENUTUP LAPORAN: 🙏 (U+1F64F)
+// PENTING: Emoji dibentuk dengan escape ES6 '\u{...}' agar identik dengan
+// ikon tema header, sehingga tidak bergantung pada encoding byte file
+// sumber. Cara ini menjamin emoji selalu valid (bukan dua surrogate yang
+// mudah terpecah menjadi karakter pengganti U+FFFD / '�').
+// =========================================================================
+const PRAYER_EMOJI = '\u{1F64F}';
+
+// Verifikasi saat halaman dimuat (cek Console bila perlu)
+(function verifyEmoji(){
+  const ok = PRAYER_EMOJI.length === 2 &&
+             PRAYER_EMOJI.codePointAt(0) === 0x1F64F;
+  if (!ok) {
+    console.error('PRAYER_EMOJI tidak valid. Pastikan file HTML disimpan sebagai UTF-8.');
+  } else {
+    console.log('Emoji OK: U+' +
+      PRAYER_EMOJI.codePointAt(0).toString(16).toUpperCase());
+  }
+})();
+
+
 // ---------- DARK THEME TOGGLE ----------
 const themeToggleBtn = document.getElementById('themeToggleBtn');
 const themeIcon = document.getElementById('themeIcon');
@@ -993,13 +1015,10 @@ function buildReport(){
   });
 
   lines.push('Rumkit TNI-AD dalam keadaan aman,');
-  
-  // Menggunakan Emoji UTF-8 Standar (Universal: PC, Android, iPhone, WhatsApp)
-  lines.push('Laporan Selesai ' + String.fromCharCode(0xD83D,0xDE4F));
+  // Emoji 🙏 dibentuk via escape ES6, bukan surrogate manual.
+  lines.push('Laporan Selesai ' + PRAYER_EMOJI);
 
-  return lines.join('\n')
-    .replace(/\uFFFD/g, String.fromCharCode(0xD83D,0xDE4F))
-    .replace(/\n{3,}/g,'\n\n');
+  return lines.join('\n').replace(/\n{3,}/g,'\n\n');
 }
 
 function refreshPreview(){
@@ -1020,20 +1039,19 @@ function setPanelState(maximized){
 previewBar.addEventListener('click', ()=> setPanelState(!panel.classList.contains('maximized')));
 
 // ---------- Teks laporan untuk clipboard / WhatsApp ----------
-// Selalu bentuk emoji secara runtime, sehingga yang masuk clipboard adalah
-// karakter Unicode U+1F64F (U+1F64F), bukan karakter pengganti U+FFFD (U+FFFD).
+// Selalu bentuk ulang bagian penutup dengan emoji valid, agar karakter
+// pengganti U+FFFD ('�') tidak pernah ikut terkirim.
 function getSafeReportText(){
   const ta = document.getElementById('outputText');
-  let text = ta.value;
-  const prayer = String.fromCharCode(0xD83D,0xDE4F);
+  let text = ta.value || '';
   const marker = 'Laporan Selesai';
   const pos = text.lastIndexOf(marker);
 
   if (pos >= 0) {
-    // Perbaiki hanya bagian penutup laporan.
-    text = text.slice(0, pos + marker.length) + ' ' + prayer;
+    // Ambil sampai kata kunci, lalu tempel ulang emoji yang valid.
+    text = text.slice(0, pos + marker.length) + ' ' + PRAYER_EMOJI;
   } else {
-    text = text.replace(/\uFFFD/g, prayer);
+    text = text.trimEnd() + '\n' + PRAYER_EMOJI;
   }
 
   return text.normalize('NFC');
@@ -1047,20 +1065,26 @@ document.getElementById('copyBtn').addEventListener('click', async (e)=>{
   const ta = document.getElementById('outputText');
   const note = document.getElementById('copyNote');
   const safeText = getSafeReportText();
+  let copied = false;
   try{
     await navigator.clipboard.writeText(safeText);
-    note.textContent = 'Teks berhasil disalin.';
+    copied = true;
   }catch(err){
-    // Fallback juga menyalin safeText, bukan isi textarea yang mungkin rusak.
-    const originalText = ta.value;
-    ta.value = safeText;
-    ta.select();
-    document.execCommand('copy');
-    ta.value = originalText;
-    note.textContent = 'Teks berhasil disalin.';
+    // Fallback: tetap salin safeText, bukan isi textarea yang mungkin rusak.
+    try{
+      const originalText = ta.value;
+      ta.value = safeText;
+      ta.select();
+      document.execCommand('copy');
+      ta.value = originalText;
+      copied = true;
+    }catch(err2){
+      copied = false;
+    }
   }
-  copyBtnIcon.textContent = '\u2713';
-  copyBtnLabel.textContent = 'Tersalin!';
+  note.textContent = copied ? 'Teks berhasil disalin.' : 'Gagal menyalin, coba lagi.';
+  copyBtnIcon.textContent = copied ? '\u2713' : '\u29C9';
+  copyBtnLabel.textContent = copied ? 'Tersalin!' : 'Gagal';
   setTimeout(()=>{
     copyBtnIcon.textContent = '\u29C9';
     copyBtnLabel.textContent = 'Salin Teks';
